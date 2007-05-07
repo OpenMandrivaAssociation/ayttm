@@ -1,6 +1,6 @@
 %define name    ayttm 
 %define version 0.4.6
-%define release 3mdk
+%define release %mkrel 4
 
 # Enable to turn off stripping of binaries
 %{?_without_stripping: %{expand: %%define __os_install_post %%{nil}}}
@@ -31,11 +31,15 @@ Release: %{release}
 License: GPL
 Group: Networking/Instant messaging
 Source: %{name}-%{version}.tar.bz2
-#Source1: %{SOURCE0}.sig
 Source10: %{name}.16.png.bz2
 Source11: %{name}.32.png.bz2
 Source12: %{name}.48.png.bz2
 Source20: %{name}-puddles-smileys.tar.bz2
+# build fix for our current gcc (4.1)
+Patch0: ayttm-0.4.6-lvalue_buildfix.patch
+# patch to avoid ayttm to be linked against glib2
+# (without this ayttm segfaults when started)
+Patch1: ayttm-0.4.6-noglib2.patch
 Obsoletes: everybuddy
 Provides: everybuddy
 URL: http://ayttm.sourceforge.net
@@ -47,6 +51,7 @@ BuildRequires: libesound-devel
 BuildRequires: libarts-devel
 BuildRequires: freetype-devel
 BuildRequires: libgdk-pixbuf-devel
+BuildRequires: libglib1.2-devel
 BuildRequires: gettext-devel
 BuildRequires: automake >= 1.6
 %if %mdkversion >= 920
@@ -74,6 +79,8 @@ configure an account and then use the importer on the Edit menu.
 #CVS build setup
 #%setup -q -n %{name}-20030130
 %setup -q
+%patch0 -p1 -b .ayttm-0.4.6-lvalue_buildfix
+%patch1 -p1 -b .noglib2
 %setup -q -T -D -a20
 
 %build
@@ -85,7 +92,9 @@ configure an account and then use the importer on the Edit menu.
 %else
   WITH_XFT=''
 %endif
-%configure $WITH_XFT --enable-esd --enable-arts --enable-lj \
+export GLIB_CONFIG=/usr/bin/glib-config
+autoconf
+%configure $WITH_XFT --enable-esd --disable-arts --enable-lj \
             --enable-jasper-filter --enable-smtp
 %make
 
@@ -105,9 +114,23 @@ icon="%{name}.png"\
 title="Ayttm"\
 longtitle="Universal Instant Messaging Client"\
 needs="x11"\
-section=%{menusection}
+section=%{menusection}\
+xdg="true"
 EOF
-)  
+)
+
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
+cat > $RPM_BUILD_ROOT%{_datadir}/applications/mandriva-%{name}.desktop << EOF
+[Desktop Entry]
+Encoding=UTF-8
+Name=Ayttm
+Comment=Universal Instant Messaging Client
+Exec=%{_bindir}/ayttm
+Icon=%{name}
+Terminal=false
+Type=Application
+Categories=X-MandrivaLinux-Internet-InstantMessaging;Network;InstantMessaging;
+EOF
 
 %__mkdir -p $RPM_BUILD_ROOT%{_miconsdir}
 %__mkdir -p $RPM_BUILD_ROOT%{_liconsdir}
@@ -160,6 +183,7 @@ EOP
 %doc doc/ AUTHORS COPYING ChangeLog INSTALL README TODO ABOUT-NLS
 %{_bindir}/*
 %{_mandir}/man1/*
+%{_datadir}/applications/mandriva-%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
 %dir %_datadir/%name
 %_datadir/%name/*
