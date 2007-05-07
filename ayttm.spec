@@ -63,6 +63,7 @@ BuildRequires: libxpm-devel
 BuildRequires: libgpgme-devel
 BuildRequires: openssl-devel
 BuildRequires: libjasper-devel
+ExclusiveArch: %{ix86}
 BuildRoot: %{_tmppath}/%{name}-buildroot
 
 %description
