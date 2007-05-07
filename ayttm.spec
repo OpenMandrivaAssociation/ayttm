@@ -51,7 +51,7 @@ BuildRequires: libltdl-devel
 BuildRequires: libesound-devel
 BuildRequires: libarts-devel
 BuildRequires: freetype-devel
-BuildRequires: libgdk-pixbuf-devel
+BuildRequires: libgdk-pixbuf2-devel
 BuildRequires: gettext-devel
 BuildRequires: automake >= 1.6
 %if %mdkversion >= 920
