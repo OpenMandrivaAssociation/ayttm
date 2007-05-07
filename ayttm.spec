@@ -60,7 +60,7 @@ BuildRequires: libaspell-devel
 BuildRequires: libpspell-devel
 %endif
 BuildRequires: libxpm-devel
-BuildRequires: libgpgme-devel
+BuildRequires: libgpgme03_6-devel
 BuildRequires: openssl-devel
 BuildRequires: libjasper-devel
 ExclusiveArch: %{ix86}
