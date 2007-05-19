@@ -1,28 +1,9 @@
 %define name    ayttm 
-%define version 0.4.6
-%define release %mkrel 4
+%define version 0.4.6.17
+%define release %mkrel 1
 
 # Enable to turn off stripping of binaries
 %{?_without_stripping: %{expand: %%define __os_install_post %%{nil}}}
-
-# Define Mandrake Linux version we are building for
-# (macro shamelessly stolen from the XFree86 spec file)
-%define mdkversion %(perl -pe '/(\\d+)\\.(\\d)\\.?(\\d)?/; $_="$1$2".($3||0)' %{_sysconfdir}/mandrake-release)
-
-# with xft
-%define with_xft 0
-%if %mdkversion >= 910
-  %define with_xft 1
-%endif
-
-%if %mdkversion >= 1000
-  %define menusection "Internet/Instant messaging"
-%else
-  %define menusection "Networking/Instant messaging"
-%endif
-
-%{?_with_xft: %{expand: %%define with_xft 1}}
-%{?_without_xft: %{expand: %%define with_xft 0}}
 
 Summary: Instant messaging client 
 Name: %{name}
@@ -30,7 +11,7 @@ Version: %{version}
 Release: %{release}
 License: GPL
 Group: Networking/Instant messaging
-Source: %{name}-%{version}.tar.bz2
+Source: %{name}-0.4.6-17.tar.bz2
 Source10: %{name}.16.png.bz2
 Source11: %{name}.32.png.bz2
 Source12: %{name}.48.png.bz2
@@ -54,11 +35,7 @@ BuildRequires: freetype-devel
 BuildRequires: libgdk-pixbuf2-devel
 BuildRequires: gettext-devel
 BuildRequires: automake >= 1.6
-%if %mdkversion >= 920
 BuildRequires: libaspell-devel
-%else
-BuildRequires: libpspell-devel
-%endif
 BuildRequires: libxpm-devel
 BuildRequires: libgpgme03_6-devel
 BuildRequires: openssl-devel
@@ -71,31 +48,20 @@ Ayttm is designed to become a Universal Instant Messaging client
 designed to seamlessly integrate all existing Instant Messaging clients and
 provide a single consistant user interface. Currently, Ayttm supports
 sending and receiving messages via AOL, ICQ, Yahoo, MSN, IRC and Jabber.
-Ayttm is a fork of everybuddy, which is being maintained and has bug
-fixes made to it.  Everybuddy is now obsolete so you should use ayttm
-instead.  To convert your prefs from everybuddy to ayttm start ayttm,
-configure an account and then use the importer on the Edit menu.
 
 %prep
-#CVS build setup
-#%setup -q -n %{name}-20030130
-%setup -q
+%setup -q -n %{name}-0.4.6
 %patch0 -p1 -b .ayttm-0.4.6-lvalue_buildfix
 %patch1 -p1 -b .noglib2
-%setup -q -T -D -a20
+%setup -q -n %{name}-0.4.6 -T -D -a20
 
 %build
 # gen is needed for CVS builds or anytime we
 # patch the configure script.
 #./gen
-%if %with_xft
-  WITH_XFT='--enable-xft'
-%else
-  WITH_XFT=''
-%endif
 export GLIB_CONFIG=/usr/bin/glib-config
 autoconf
-%configure $WITH_XFT --enable-esd --disable-arts --enable-lj \
+%configure --enable-xft --enable-esd --disable-arts --enable-lj \
             --enable-jasper-filter --enable-smtp
 %make
 
@@ -115,7 +81,7 @@ icon="%{name}.png"\
 title="Ayttm"\
 longtitle="Universal Instant Messaging Client"\
 needs="x11"\
-section=%{menusection}\
+section="Internet/Instant messaging"\
 xdg="true"
 EOF
 )
@@ -135,9 +101,15 @@ EOF
 
 %__mkdir -p $RPM_BUILD_ROOT%{_miconsdir}
 %__mkdir -p $RPM_BUILD_ROOT%{_liconsdir}
+%__mkdir -p $RPM_BUILD_ROOT%{_iconsdir}/hicolor/48x48/apps
+%__mkdir -p $RPM_BUILD_ROOT%{_iconsdir}/hicolor/32x32/apps
+%__mkdir -p $RPM_BUILD_ROOT%{_iconsdir}/hicolor/16x16/apps
 %__bzip2 -dc %{SOURCE10} > $RPM_BUILD_ROOT%{_miconsdir}/%{name}.png
 %__bzip2 -dc %{SOURCE11} > $RPM_BUILD_ROOT%{_iconsdir}/%{name}.png
 %__bzip2 -dc %{SOURCE12} > $RPM_BUILD_ROOT%{_liconsdir}/%{name}.png
+%__bzip2 -dc %{SOURCE10} > $RPM_BUILD_ROOT%{_iconsdir}/hicolor/16x16/apps/%{name}.png
+%__bzip2 -dc %{SOURCE11} > $RPM_BUILD_ROOT%{_iconsdir}/hicolor/32x32/apps/%{name}.png
+%__bzip2 -dc %{SOURCE12} > $RPM_BUILD_ROOT%{_iconsdir}/hicolor/48x48/apps/%{name}.png
 
 # Extra smileys
 %__cp -a 'Puddles' $RPM_BUILD_ROOT%{_datadir}/%{name}/smileys
@@ -150,7 +122,9 @@ EOF
 %find_lang %name
 
 %post
-%{update_menus}
+%update_menus
+%update_desktop_database
+%update_icon_cache hicolor
 
 # Fix the paths to the modules in the prefs files...
 # Note that $ has to be escaped so the shell doesn't wack 
@@ -177,7 +151,9 @@ while (my (@pwent) = getpwent()) {
 EOP
 
 %postun
-%{clean_menus}
+%clean_menus
+%clean_desktop_database
+%clean_icon_cache hicolor
 
 %files -f %name.lang
 %defattr (-,root,root)
@@ -193,6 +169,9 @@ EOP
 %{_iconsdir}/*.png
 %{_miconsdir}/*.png
 %{_liconsdir}/*.png
+%{_iconsdir}/hicolor/16x16/apps/%{name}.png
+%{_iconsdir}/hicolor/32x32/apps/%{name}.png
+%{_iconsdir}/hicolor/48x48/apps/%{name}.png
 %{_menudir}/*
 %config(noreplace) %{_sysconfdir}/%{name}rc
 
