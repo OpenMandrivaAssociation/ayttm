@@ -32,12 +32,12 @@ BuildRequires: libltdl-devel
 BuildRequires: libesound-devel
 BuildRequires: libarts-devel
 BuildRequires: freetype-devel
-BuildRequires: libgdk-pixbuf2-devel
+BuildRequires: gdk-pixbuf-devel
 BuildRequires: gettext-devel
 BuildRequires: automake >= 1.6
 BuildRequires: libaspell-devel
 BuildRequires: libxpm-devel
-BuildRequires: libgpgme03_6-devel
+BuildRequires: libgpgme03-devel
 BuildRequires: openssl-devel
 BuildRequires: libjasper-devel
 ExclusiveArch: %{ix86}
