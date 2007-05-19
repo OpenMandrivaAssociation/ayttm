@@ -1,6 +1,11 @@
 %define name    ayttm 
-%define version 0.4.6.17
+%define version 0.4.7
+%define cvs 20070519
+%if %cvs
+%define release %mkrel 0.%cvs.1
+%else
 %define release %mkrel 1
+%endif
 
 # Enable to turn off stripping of binaries
 %{?_without_stripping: %{expand: %%define __os_install_post %%{nil}}}
@@ -11,7 +16,11 @@ Version: %{version}
 Release: %{release}
 License: GPL
 Group: Networking/Instant messaging
+%if %cvs
+Source:	%{name}-%{cvs}.tar.bz2
+%else
 Source: %{name}-0.4.6-17.tar.bz2
+%endif
 Source10: %{name}.16.png.bz2
 Source11: %{name}.32.png.bz2
 Source12: %{name}.48.png.bz2
@@ -21,6 +30,8 @@ Patch0: ayttm-0.4.6-lvalue_buildfix.patch
 # patch to avoid ayttm to be linked against glib2
 # (without this ayttm segfaults when started)
 Patch1: ayttm-0.4.6-noglib2.patch
+# Fix spaces in smiley theme names (from Debian)
+Patch2: ayttm-0.4.6-smileys.patch
 Obsoletes: everybuddy
 Provides: everybuddy
 URL: http://ayttm.sourceforge.net
@@ -37,10 +48,9 @@ BuildRequires: gettext-devel
 BuildRequires: automake >= 1.6
 BuildRequires: libaspell-devel
 BuildRequires: libxpm-devel
-BuildRequires: libgpgme03-devel
+BuildRequires: libgpgme-devel < 0.4
 BuildRequires: openssl-devel
 BuildRequires: libjasper-devel
-ExclusiveArch: %{ix86}
 BuildRoot: %{_tmppath}/%{name}-buildroot
 
 %description
@@ -50,20 +60,23 @@ provide a single consistant user interface. Currently, Ayttm supports
 sending and receiving messages via AOL, ICQ, Yahoo, MSN, IRC and Jabber.
 
 %prep
-%setup -q -n %{name}-0.4.6
+%setup -q -n %{name}
 %patch0 -p1 -b .ayttm-0.4.6-lvalue_buildfix
 %patch1 -p1 -b .noglib2
-%setup -q -n %{name}-0.4.6 -T -D -a20
+%patch2 -p1 -b .smiley
+%setup -q -n %{name} -T -D -a20
 
 %build
-# gen is needed for CVS builds or anytime we
-# patch the configure script.
-#./gen
+%if %cvs
+./gen
+%endif
 export GLIB_CONFIG=/usr/bin/glib-config
 autoconf
 %configure --enable-xft --enable-esd --disable-arts --enable-lj \
             --enable-jasper-filter --enable-smtp
-%make
+
+# Parallel build fails - AdamW
+make
 
 %install
 %__rm -rf $RPM_BUILD_ROOT
@@ -123,7 +136,6 @@ EOF
 
 %post
 %update_menus
-%update_desktop_database
 %update_icon_cache hicolor
 
 # Fix the paths to the modules in the prefs files...
@@ -152,7 +164,6 @@ EOP
 
 %postun
 %clean_menus
-%clean_desktop_database
 %clean_icon_cache hicolor
 
 %files -f %name.lang
@@ -164,6 +175,8 @@ EOP
 %{_datadir}/pixmaps/%{name}.png
 %dir %_datadir/%name
 %_datadir/%name/*
+%dir %_datadir/%{name}smileys
+%_datadir/%{name}smileys/*
 %dir %_libdir/%name
 %_libdir/%name/*
 %{_iconsdir}/*.png
