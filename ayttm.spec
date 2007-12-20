@@ -47,6 +47,7 @@ BuildRequires:	libxpm-devel
 BuildRequires:	libgpgme-devel < 0.4
 BuildRequires:	openssl-devel
 BuildRequires:	libjasper-devel
+BuildRoot:	%{_tmppath}/%{name}-buildroot
 
 %description
 Ayttm is designed to become a Universal Instant Messaging client
