@@ -1,6 +1,5 @@
 %define name    ayttm 
-%define version	0.5.0.10
-%define fver	0.5.0-10
+%define fver	0.5.0-45
 %define cvs	0
 %if %cvs
 %define release	%mkrel 0.%cvs.1
@@ -12,8 +11,8 @@
 %{?_without_stripping: %{expand: %%define __os_install_post %%{nil}}}
 
 Summary:	Instant messaging client 
-Name:		%{name}
-Version:	%{version}
+Name:		ayttm
+Version:	0.5.0.45
 Release:	%{release}
 License:	GPLv2+
 Group:		Networking/Instant messaging
@@ -26,9 +25,6 @@ Source10:	%{name}.16.png.bz2
 Source11:	%{name}.32.png.bz2
 Source12:	%{name}.48.png.bz2
 Source20:	%{name}-puddles-smileys.tar.bz2
-# From upstream CVS: replace a deprecated function (build fails without
-# this) - AdamW 2007/11
-Patch0:		ayttm-0.5.0.10-unref.patch
 Obsoletes:	everybuddy
 Provides:	everybuddy
 URL:		http://ayttm.sourceforge.net
@@ -58,7 +54,6 @@ sending and receiving messages via AOL, ICQ, Yahoo, MSN, IRC and Jabber.
 %prep
 %setup -q -n %{name}-%{fver}
 %setup -q -n %{name}-%{fver} -T -D -a20
-%patch0 -p1 -b .unref
 
 %build
 %if %cvs
@@ -76,8 +71,9 @@ make
 %__rm -rf %{buildroot}
 %makeinstall 
 
-# We don't need the .a files...
-%__rm -f %{buildroot}/%{_libdir}/%{name}/*.a
+# We don't need the .a files...or headers...
+%__rm -f %{buildroot}%{_libdir}/%{name}/*.a
+%__rm -rf %{buildroot}%{_includedir}
 
 mkdir -p %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
@@ -104,7 +100,7 @@ EOF
 %__rm -f %{buildroot}%{_datadir}/applnk/Internet/ayttm.desktop
 %__rm -f %{buildroot}%{_datadir}/gnome/apps/Internet/ayttm.desktop
 
-%find_lang %name
+%find_lang %{name}
 
 %clean 
 %__rm -rf %{buildroot}
@@ -145,7 +141,7 @@ EOP
 %clean_icon_cache hicolor
 %endif
 
-%files -f %name.lang
+%files -f %{name}.lang
 %defattr (-,root,root)
 %doc doc/ AUTHORS ChangeLog INSTALL README TODO ABOUT-NLS
 %{_bindir}/*
