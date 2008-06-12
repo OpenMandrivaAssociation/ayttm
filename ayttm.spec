@@ -110,8 +110,10 @@ EOF
 %__rm -rf %{buildroot}
 
 %post
+%if %mdkversion < 200900
 %update_menus
 %update_icon_cache hicolor
+%endif
 
 # Fix the paths to the modules in the prefs files...
 # Note that $ has to be escaped so the shell doesn't wack 
@@ -137,9 +139,11 @@ while (my (@pwent) = getpwent()) {
 }
 EOP
 
+%if %mdkversion < 200900
 %postun
 %clean_menus
 %clean_icon_cache hicolor
+%endif
 
 %files -f %name.lang
 %defattr (-,root,root)
