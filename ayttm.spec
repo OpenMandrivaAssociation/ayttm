@@ -2,9 +2,9 @@
 %define fver	0.5.0-45
 %define cvs	0
 %if %cvs
-%define release	%mkrel 0.%cvs.1
+%define release	%mkrel 2.%cvs.1
 %else
-%define release	%mkrel 1
+%define release	%mkrel 2
 %endif
 
 # Enable to turn off stripping of binaries
