@@ -2,7 +2,7 @@
 %define fver	0.5.0-45
 %define cvs	0
 %if %cvs
-%define release	%mkrel 2.%cvs.2
+%define release	%mkrel 2.%cvs.3
 %else
 %define release	%mkrel 2
 %endif
