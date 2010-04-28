@@ -1,30 +1,17 @@
-%define name    ayttm 
-%define fver	0.5.0-45
-%define cvs	0
-%if %cvs
-%define release	%mkrel 2.%cvs.3
-%else
-%define release	%mkrel 2
-%endif
-
-# Enable to turn off stripping of binaries
-%{?_without_stripping: %{expand: %%define __os_install_post %%{nil}}}
-
 Summary:	Instant messaging client 
 Name:		ayttm
-Version:	0.5.0.45
-Release:	%{release}
+Version:	0.6.2
+Release:	%mkrel 1
 License:	GPLv2+
 Group:		Networking/Instant messaging
-%if %cvs
-Source:		%{name}-%{cvs}.tar.bz2
-%else
-Source:		%{name}-%{fver}.tar.bz2
-%endif
+Source:		http://downloads.sourceforge.net/project/ayttm/ayttm/%version/%name-%version.tar.bz2
 Source10:	%{name}.16.png.bz2
 Source11:	%{name}.32.png.bz2
 Source12:	%{name}.48.png.bz2
 Source20:	%{name}-puddles-smileys.tar.bz2
+Patch0:		ayttm-0.6.2-fix-str-fmt.patch
+Patch1:		ayttm-0.6.2-link.patch
+Patch2:		ayttm-0.6.2-imagedir.patch
 Obsoletes:	everybuddy
 Provides:	everybuddy
 URL:		http://ayttm.sourceforge.net
@@ -34,15 +21,15 @@ BuildRequires:	glib2-devel
 BuildRequires:	gtk+2-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libesound-devel
-BuildRequires:	libarts-devel
-BuildRequires:	freetype-devel
 BuildRequires:	gettext-devel
 BuildRequires:	automake >= 1.6
-BuildRequires:	libaspell-devel
 BuildRequires:	libxpm-devel
-BuildRequires:	libgpgme-devel < 0.4
+BuildRequires:	libgpgme-devel >= 1.0
 BuildRequires:	openssl-devel
 BuildRequires:	libjasper-devel
+BuildRequires:	enchant-devel
+BuildRequires:	libx11-devel
+BuildRequires:	libxscrnsaver-devel
 BuildRoot:	%{_tmppath}/%{name}-buildroot
 
 %description
@@ -52,28 +39,23 @@ provide a single consistant user interface. Currently, Ayttm supports
 sending and receiving messages via AOL, ICQ, Yahoo, MSN, IRC and Jabber.
 
 %prep
-%setup -q -n %{name}-%{fver}
-%setup -q -n %{name}-%{fver} -T -D -a20
+%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version} -T -D -a20
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
 
 %build
-%if %cvs
-./gen
-%endif
-#export GLIB_CONFIG=/usr/bin/glib-config
-autoconf
-%configure2_5x --enable-xft --enable-esd --disable-arts --enable-lj \
-            --enable-jasper-filter --enable-smtp
+autoreconf -fi
+%configure2_5x --enable-esd --disable-arts --enable-lj \
+            --enable-jasper-filter --enable-smtp --disable-static
 
-# Parallel build fails - AdamW
-make
+%make
 
 %install
 %__rm -rf %{buildroot}
-%makeinstall 
+%makeinstall_std
 
-# We don't need the .a files...or headers...
-%__rm -f %{buildroot}%{_libdir}/%{name}/*.a
-%__rm -rf %{buildroot}%{_includedir}
 
 mkdir -p %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
@@ -94,11 +76,6 @@ EOF
 
 # Extra smileys
 %__cp -a 'Puddles' %{buildroot}%{_datadir}/%{name}/smileys
-
-# remove unpackaged files
-%__rm -f %{buildroot}%{_sysconfdir}/X11/applnk/Internet/Ayttm.desktop
-%__rm -f %{buildroot}%{_datadir}/applnk/Internet/ayttm.desktop
-%__rm -f %{buildroot}%{_datadir}/gnome/apps/Internet/ayttm.desktop
 
 %find_lang %{name}
 
@@ -147,7 +124,6 @@ EOP
 %{_bindir}/*
 %{_mandir}/man1/*
 %{_datadir}/applications/mandriva-%{name}.desktop
-%{_datadir}/pixmaps/%{name}.png
 %{_datadir}/%{name}
 %{_libdir}/%{name}
 %{_iconsdir}/hicolor/*/apps/%{name}.png
