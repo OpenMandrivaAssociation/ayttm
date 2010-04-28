@@ -69,6 +69,9 @@ Type=Application
 Categories=Network;InstantMessaging;
 EOF
 
+rm -f %buildroot%_datadir/applnk/Internet/ayttm.desktop
+rm -f %buildroot%_datadir/gnome/apps/Internet/ayttm.desktop
+
 %__mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
 %__bzip2 -dc %{SOURCE10} > %{buildroot}%{_iconsdir}/hicolor/16x16/apps/%{name}.png
 %__bzip2 -dc %{SOURCE11} > %{buildroot}%{_iconsdir}/hicolor/32x32/apps/%{name}.png
