@@ -1,0 +1,33 @@
+--- src/Makefile.am.link	2010-04-28 16:17:14.000000000 +0200
++++ src/Makefile.am	2010-04-28 16:17:58.000000000 +0200
+@@ -42,8 +42,8 @@
+ AM_CFLAGS = $(EB_CFLAGS) -I$(top_srcdir) -I$(top_srcdir)/libproxy \
+ 	$(GNOME_INCLUDEDIR)
+ AM_CXXFLAGS = $(AM_CFLAGS) $(ENCHANT_CFLAGS)
+-LIBS = @LIBS@ $(EB_LIBS) $(top_srcdir)/libproxy/libproxy.a $(GNOME_LIBDIR) $(GNOME_APPLETS_LIBS) $(ENCHANT_LIBS) -L/usr/local/lib/pth/ $(WIN32_LIBS)
+-ayttm_LDFLAGS = $(EB_LDFLAGS) -export-dynamic $(WIN32_LD) -lX11
++LIBS = @LIBS@ $(top_srcdir)/libproxy/libproxy.a $(EB_LIBS) $(GNOME_LIBDIR) $(GNOME_APPLETS_LIBS) $(ENCHANT_LIBS) -L/usr/local/lib/pth/ $(WIN32_LIBS) -lX11
++ayttm_LDFLAGS = $(EB_LDFLAGS) -export-dynamic $(WIN32_LD)
+ CLEANFILES = @CLEANFILES@ defaults.h
+ DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" -D_REENTRANT -DIMG_DIR=\"${datadir}/pixmaps/\"
+ 
+--- src/Makefile.in.link	2010-04-28 16:17:20.000000000 +0200
++++ src/Makefile.in	2010-04-28 16:19:18.000000000 +0200
+@@ -271,7 +271,7 @@
+ LIBICONV = @LIBICONV@
+ LIBINTL = @LIBINTL@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@ $(EB_LIBS) $(top_srcdir)/libproxy/libproxy.a $(GNOME_LIBDIR) $(GNOME_APPLETS_LIBS) $(ENCHANT_LIBS) -L/usr/local/lib/pth/ $(WIN32_LIBS)
++LIBS = @LIBS@ $(top_srcdir)/libproxy/libproxy.a $(EB_LIBS) $(GNOME_LIBDIR) $(GNOME_APPLETS_LIBS) $(ENCHANT_LIBS) -L/usr/local/lib/pth/ $(WIN32_LIBS) -lX11
+ LIBTOOL = @LIBTOOL@
+ LIPO = @LIPO@
+ LN_S = @LN_S@
+@@ -417,7 +417,7 @@
+ 	$(GNOME_INCLUDEDIR)
+ 
+ AM_CXXFLAGS = $(AM_CFLAGS) $(ENCHANT_CFLAGS)
+-ayttm_LDFLAGS = $(EB_LDFLAGS) -export-dynamic $(WIN32_LD) -lX11
++ayttm_LDFLAGS = $(EB_LDFLAGS) -export-dynamic $(WIN32_LD)
+ CLEANFILES = @CLEANFILES@ defaults.h
+ ayttm_LDADD = \
+ 	gtk/libayttmgtk.la \

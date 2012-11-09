@@ -1,0 +1,22 @@
+--- src/Makefile.am.dir	2010-04-28 16:30:39.000000000 +0200
++++ src/Makefile.am	2010-04-28 16:31:44.000000000 +0200
+@@ -45,7 +45,7 @@
+ LIBS = @LIBS@ $(top_srcdir)/libproxy/libproxy.a $(EB_LIBS) $(GNOME_LIBDIR) $(GNOME_APPLETS_LIBS) $(ENCHANT_LIBS) -L/usr/local/lib/pth/ $(WIN32_LIBS) -lX11
+ ayttm_LDFLAGS = $(EB_LDFLAGS) -export-dynamic $(WIN32_LD)
+ CLEANFILES = @CLEANFILES@ defaults.h
+-DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" -D_REENTRANT -DIMG_DIR=\"${datadir}/pixmaps/\"
++DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" -D_REENTRANT -DIMG_DIR=\"${datadir}/$(PACKAGE)/\"
+ 
+ ayttm_LDADD = \
+ 	gtk/libayttmgtk.la \
+--- pixmaps/Makefile.am.dir	2010-04-28 16:32:06.000000000 +0200
++++ pixmaps/Makefile.am	2010-04-28 16:33:00.000000000 +0200
+@@ -27,7 +27,7 @@
+ 	away.png buddy.png group.png group-chat.png smileys.png
+ 
+ 
+-Utilitiesdir = $(datadir)/pixmaps
++Utilitiesdir = $(datadir)/$(PACKAGE)
+ Utilities_DATA = ayttm.png away.png buddy.png group.png group-chat.png smileys.png
+ # Gets rid of the datarootdir warning
+ datarootdir=@datarootdir@

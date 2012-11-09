@@ -1,0 +1,69 @@
+--- libproxy/proxy.c.str	2010-04-28 16:05:47.000000000 +0200
++++ libproxy/proxy.c	2010-04-28 16:06:28.000000000 +0200
+@@ -311,7 +311,7 @@
+ 	strncat(cmd, "\r\n", remaining);
+ #ifndef DEBUG
+ 	snprintf(debug_buff, sizeof(debug_buff), "<%s>\n", cmd);
+-	debug_print(debug_buff);
++	debug_print("%s",debug_buff);
+ #endif
+ 	if (send(sockfd, cmd, strlen(cmd), 0) < 0)
+ 		return AY_CONNECTION_REFUSED;
+@@ -319,7 +319,7 @@
+ 		return AY_CONNECTION_REFUSED;
+ #ifndef DEBUG
+ 	snprintf(debug_buff, sizeof(debug_buff), "<%s>\n", inputline);
+-	debug_print(debug_buff);
++	debug_print("%s",debug_buff);
+ #endif
+ 	if (!strstr(inputline, "200")) {
+ 		/* Check if proxy authorization needed */
+@@ -346,7 +346,7 @@
+ 		}
+ #ifndef DEBUG
+ 		snprintf(debug_buff, sizeof(debug_buff), "<%s>\n", inputline);
+-		debug_print(debug_buff);
++		debug_print("%s",debug_buff);
+ #endif
+ 	}
+ 	free(inputline);
+--- src/edit_list_window.c.str	2010-04-28 16:08:10.000000000 +0200
++++ src/edit_list_window.c	2010-04-28 16:08:42.000000000 +0200
+@@ -372,22 +372,22 @@
+ 	while (data_list) {
+ 		my_data = (data *)data_list->data;
+ 
+-		fprintf(fp, bentity);
++		fprintf(fp, "%s",bentity);
+ 		fprintf(fp, "\n");
+ 		fprintf(fp, "<TITLE>\n");
+ 		strncpy(buff2, my_data->title, strlen(my_data->title) + 1);
+ 		g_strchomp(buff2);
+ 		fprintf(fp, "%s\n", buff2);
+ 		fprintf(fp, "</TITLE>\n");
+-		fprintf(fp, bvalue);
++		fprintf(fp, "%s",bvalue);
+ 		fprintf(fp, "\n");
+ 		strncpy(buff2, my_data->message->str,
+ 			strlen(my_data->message->str) + 1);
+ 		g_strchomp(buff2);
+ 		fprintf(fp, "%s\n", buff2);
+-		fprintf(fp, evalue);
++		fprintf(fp, "%s",evalue);
+ 		fprintf(fp, "\n");
+-		fprintf(fp, eentity);
++		fprintf(fp, "%s",eentity);
+ 		fprintf(fp, "\n");
+ 
+ 		data_list = data_list->next;
+--- src/messages.c.str	2010-04-28 16:07:49.000000000 +0200
++++ src/messages.c	2010-04-28 16:08:02.000000000 +0200
+@@ -45,7 +45,7 @@
+ 	}
+ 
+ 	dialog = gtk_message_dialog_new_with_markup(NULL, flags, mtype,
+-		GTK_BUTTONS_OK, inMessage);
++		GTK_BUTTONS_OK, "%s", inMessage);
+ 	gtk_window_set_title(GTK_WINDOW(dialog), inTitle);
+ 	gtk_widget_show(dialog);
+ 
