@@ -1,10 +1,10 @@
 Summary:	Instant messaging client 
 Name:		ayttm
 Version:	0.6.2
-Release:	%mkrel 2
+Release:	3
 License:	GPLv2+
 Group:		Networking/Instant messaging
-Source:		http://downloads.sourceforge.net/project/ayttm/ayttm/%version/%name-%version.tar.bz2
+Source:		http://downloads.sourceforge.net/project/ayttm/ayttm/%{version}/%{name}-%{version}.tar.bz2
 Source10:	%{name}.16.png.bz2
 Source11:	%{name}.32.png.bz2
 Source12:	%{name}.48.png.bz2
@@ -15,22 +15,21 @@ Patch2:		ayttm-0.6.2-imagedir.patch
 Obsoletes:	everybuddy
 Provides:	everybuddy
 URL:		http://ayttm.sourceforge.net
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
-BuildRequires:	glib2-devel
-BuildRequires:	gtk+2-devel
-BuildRequires:	libltdl-devel
-BuildRequires:	libesound-devel
 BuildRequires:	gettext-devel
-BuildRequires:	automake >= 1.6
-BuildRequires:	libxpm-devel
-BuildRequires:	libgpgme-devel >= 1.0
-BuildRequires:	openssl-devel
-BuildRequires:	libjasper-devel
-BuildRequires:	enchant-devel
-BuildRequires:	libx11-devel
-BuildRequires:	libxscrnsaver-devel
-BuildRoot:	%{_tmppath}/%{name}-buildroot
+BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	pkgconfig(gtk+-2.0)
+BuildRequires:	libgpgme-devel
+BuildRequires:	libltdl-devel
+BuildRequires:	pkgconfig(enchant)
+BuildRequires:	pkgconfig(esound)
+BuildRequires:	pkgconfig(jasper)
+BuildRequires:	pkgconfig(openssl)
+BuildRequires:	pkgconfig(x11)
+BuildRequires:	pkgconfig(xpm)
+BuildRequires:	pkgconfig(xscrnsaver)
 
 %description
 Ayttm is designed to become a Universal Instant Messaging client
@@ -53,7 +52,6 @@ autoreconf -fi
 %make
 
 %install
-%__rm -rf %{buildroot}
 %makeinstall_std
 
 
@@ -72,25 +70,17 @@ EOF
 rm -f %buildroot%_datadir/applnk/Internet/ayttm.desktop
 rm -f %buildroot%_datadir/gnome/apps/Internet/ayttm.desktop
 
-%__mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
-%__bzip2 -dc %{SOURCE10} > %{buildroot}%{_iconsdir}/hicolor/16x16/apps/%{name}.png
-%__bzip2 -dc %{SOURCE11} > %{buildroot}%{_iconsdir}/hicolor/32x32/apps/%{name}.png
-%__bzip2 -dc %{SOURCE12} > %{buildroot}%{_iconsdir}/hicolor/48x48/apps/%{name}.png
+mkdir -p %{buildroot}%{_iconsdir}/hicolor/{16x16,32x32,48x48}/apps
+bzip2 -dc %{SOURCE10} > %{buildroot}%{_iconsdir}/hicolor/16x16/apps/%{name}.png
+bzip2 -dc %{SOURCE11} > %{buildroot}%{_iconsdir}/hicolor/32x32/apps/%{name}.png
+bzip2 -dc %{SOURCE12} > %{buildroot}%{_iconsdir}/hicolor/48x48/apps/%{name}.png
 
 # Extra smileys
-%__cp -a 'Puddles' %{buildroot}%{_datadir}/%{name}/smileys
+cp -a 'Puddles' %{buildroot}%{_datadir}/%{name}/smileys
 
 %find_lang %{name}
 
-%clean 
-%__rm -rf %{buildroot}
-
 %post
-%if %mdkversion < 200900
-%update_menus
-%update_icon_cache hicolor
-%endif
-
 # Fix the paths to the modules in the prefs files...
 # Note that $ has to be escaped so the shell doesn't wack 
 # them.
@@ -115,14 +105,7 @@ while (my (@pwent) = getpwent()) {
 }
 EOP
 
-%if %mdkversion < 200900
-%postun
-%clean_menus
-%clean_icon_cache hicolor
-%endif
-
 %files -f %{name}.lang
-%defattr (-,root,root)
 %doc doc/ AUTHORS ChangeLog INSTALL README TODO ABOUT-NLS
 %{_bindir}/*
 %{_mandir}/man1/*
