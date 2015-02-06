@@ -1,7 +1,7 @@
 Summary:	Instant messaging client 
 Name:		ayttm
 Version:	0.6.2
-Release:	3
+Release:	4
 License:	GPLv2+
 Group:		Networking/Instant messaging
 Source:		http://downloads.sourceforge.net/project/ayttm/ayttm/%{version}/%{name}-%{version}.tar.bz2
