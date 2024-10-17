@@ -14,7 +14,7 @@ Patch1:		ayttm-0.6.2-link.patch
 Patch2:		ayttm-0.6.2-imagedir.patch
 Obsoletes:	everybuddy
 Provides:	everybuddy
-URL:		http://ayttm.sourceforge.net
+URL:		https://ayttm.sourceforge.net
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	flex
